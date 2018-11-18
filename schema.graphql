@@ -1,0 +1,58 @@
+schema {
+    query: PhotoQuery
+}
+
+type PhotoQuery {
+    interesting(page: Int): PhotoList
+    search(query: String, bbox: BoundingBox, page: Int): PhotoList
+}
+
+type PhotoList {
+    photos: [Photo]
+    pagination: Pagination!
+}
+
+type Photo {
+    id: ID!
+    ownerName: String!
+    location: Location
+    photoUrls: [SizedURL]
+}
+
+type Location {
+    latitude: Float!
+    longitude: Float!
+    accuracy: Int!
+}
+
+type SizedURL {
+    size: PhotoSize!
+    url: String!
+    width: Int!
+    height: Int!
+}
+
+enum PhotoSize {
+    Thumbnail,
+    Small,
+    Small320,
+    Square,
+    LargeSquare,
+    Medium,
+    Medium640,
+    Medium800,
+    Large,
+    Original
+}
+
+type Pagination {
+    hasNext: Boolean!
+    next: Int
+}
+
+input BoundingBox {
+    minLongitude: Float!
+    minLatitude: Float!
+    maxLongitude: Float!
+    maxLatitude: Float!
+}

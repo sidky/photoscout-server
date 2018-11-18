@@ -1,0 +1,1 @@
+web: ./photoscout-server
