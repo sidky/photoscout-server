@@ -1,1 +1,1 @@
-web: ./photoscout-server
+web: photoscout-server
