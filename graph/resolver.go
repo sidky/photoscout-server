@@ -91,6 +91,11 @@ func (r *Resolver) Detail(args struct {
 
 	log.Printf("ID from info: %s", info.ID)
 
+	var location *Location
+	if loc := info.Location; loc != nil {
+		location = &Location{latitude: loc.Latitude, longitude: loc.Longitude, accuracy: loc.Accuracy}
+	}
+
 	exifResponse, err := r.flickr.Exif(*args.PhotoId)
 	photoExif := exifResponse.Photo
 	exifs := make([]*Exif, len(photoExif.Tags))
@@ -123,6 +128,7 @@ func (r *Resolver) Detail(args struct {
 		camera:      &photoExif.Camera,
 		tags:        tags,
 		exif:        exifs,
+		location:    location,
 	}
 	return &response
 }

@@ -100,6 +100,7 @@ type PhotoInfo struct {
 	Title        FlickrString     `json:"title"`
 	Description  FlickrString     `json:"description"`
 	Tags         FlickrTagList    `json:"tags"`
+	Location     *PhotoLocation   `json:"location"`
 }
 
 type PhotoOwner struct {
@@ -109,8 +110,25 @@ type PhotoOwner struct {
 	Location *string `json:"location"`
 }
 
+type PhotoLocation struct {
+	Latitude     float64        `json:"latitude"`
+	Longitude    float64        `json:"longitude"`
+	Accuracy     int32          `json:"accuracy"`
+	Neighborhood FlickrLocation `json:"neighborhood"`
+	Locality     FlickrLocation `json:"locality"`
+	County       FlickrLocation `json:"county"`
+	Region       FlickrLocation `json:"region"`
+	Country      FlickrLocation `json:"country"`
+}
+
 type FlickrString struct {
 	Content string `json:"_content"`
+}
+
+type FlickrLocation struct {
+	Content string `json:"_content"`
+	PlaceID string `json:"place_id"`
+	WoeID   string `json:"woeid"`
 }
 
 func (f FlickrString) String() string {

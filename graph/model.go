@@ -110,6 +110,7 @@ type PhotoDetail struct {
 	camera      *string
 	tags        []*Tag
 	exif        []*Exif
+	location    *Location
 }
 
 func (detail *PhotoDetail) ID() string {
@@ -142,6 +143,10 @@ func (detail *PhotoDetail) Camera() *string {
 
 func (detail *PhotoDetail) Exif() *[]*Exif {
 	return &detail.exif
+}
+
+func (detail *PhotoDetail) Location() *Location {
+	return detail.location
 }
 
 type PhotoOwner struct {

@@ -66,9 +66,10 @@ type PhotoDetail {
     owner: PhotoOwner!
     title: String!
     description: String!
-    camera: String,
+    camera: String
     tags: [Tag]
     exif: [Exif]
+    location: Location
 }
 
 type PhotoOwner {
