@@ -2,7 +2,9 @@ package graph
 
 import (
 	"log"
+	"time"
 
+	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/sidky/photoscout-server/flickr"
 )
 
@@ -67,6 +69,62 @@ func (r *Resolver) Search(args struct {
 	pagination := Pagination{hasNext: hasNext, nextPage: *page + 1}
 
 	return &PhotoList{photos: photos, pagination: &pagination}
+}
+
+func (r *Resolver) Detail(args struct {
+	PhotoId *string
+}) *PhotoDetail {
+	infoResponse, err := r.flickr.Info(*args.PhotoId)
+	if err != nil {
+		log.Print(err)
+	}
+
+	info := infoResponse.Photo
+	tags := make([]*Tag, len(info.Tags.Tag))
+	for index, tag := range info.Tags.Tag {
+		gtag := Tag{
+			raw:        tag.Raw,
+			machineTag: (tag.MachineTag != 0),
+		}
+		tags[index] = &gtag
+	}
+
+	log.Printf("ID from info: %s", info.ID)
+
+	exifResponse, err := r.flickr.Exif(*args.PhotoId)
+	photoExif := exifResponse.Photo
+	exifs := make([]*Exif, len(photoExif.Tags))
+	for index, exif := range photoExif.Tags {
+		gexif := Exif{
+			tagSpace: exif.TagSpace,
+			tag:      exif.Tag,
+			label:    exif.Label,
+			raw:      exif.Raw.Content,
+		}
+		exifs[index] = &gexif
+	}
+
+	if err != nil {
+		log.Print(err)
+	}
+	owner := PhotoOwner{
+		userID:   info.Owner.Nsid,
+		name:     info.Owner.RealName,
+		userName: info.Owner.UserName,
+		location: info.Owner.Location,
+	}
+
+	response := PhotoDetail{
+		id:          info.ID,
+		uploadedAt:  graphql.Time{time.Unix(int64(info.DateUploaded.Int64()), 0)},
+		owner:       owner,
+		title:       info.Title.Content,
+		description: info.Description.Content,
+		camera:      &photoExif.Camera,
+		tags:        tags,
+		exif:        exifs,
+	}
+	return &response
 }
 
 func convertPhoto(flickr *flickr.Photo) *Photo {

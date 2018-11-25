@@ -88,3 +88,33 @@ func (flickr *Flickr) Search(query *string, boundingBox *BoundingBox, page *int3
 	}
 	return &response, nil
 }
+
+func (flickr *Flickr) Info(photoId string) (*PhotoInfoResponse, error) {
+	q := flickr.defaultQueryParameters()
+	q.Add("method", "flickr.photos.getInfo")
+	q.Add("photo_id", photoId)
+	u, e := rest.BuildURL(flickrHost, q)
+	if e != nil {
+		return nil, e
+	}
+	var response PhotoInfoResponse
+	if e = rest.Get(u, &response); e != nil {
+		return nil, e
+	}
+	return &response, nil
+}
+
+func (flickr *Flickr) Exif(photoId string) (*PhotoExifResponse, error) {
+	q := flickr.defaultQueryParameters()
+	q.Add("method", "flickr.photos.getExif")
+	q.Add("photo_id", photoId)
+	u, e := rest.BuildURL(flickrHost, q)
+	if e != nil {
+		return nil, e
+	}
+	var response PhotoExifResponse
+	if e = rest.Get(u, &response); e != nil {
+		return nil, e
+	}
+	return &response, nil
+}

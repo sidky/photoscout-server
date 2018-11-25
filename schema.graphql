@@ -1,3 +1,5 @@
+scalar Time
+
 schema {
     query: PhotoQuery
 }
@@ -5,6 +7,7 @@ schema {
 type PhotoQuery {
     interesting(page: Int): PhotoList
     search(query: String, bbox: BoundingBox, page: Int): PhotoList
+    detail(photoId: String): PhotoDetail
 }
 
 type PhotoList {
@@ -55,4 +58,34 @@ input BoundingBox {
     minLatitude: Float!
     maxLongitude: Float!
     maxLatitude: Float!
+}
+
+type PhotoDetail {
+    id: String!
+    uploadedAt: Time!
+    owner: PhotoOwner!
+    title: String!
+    description: String!
+    camera: String,
+    tags: [Tag]
+    exif: [Exif]
+}
+
+type PhotoOwner {
+    userId: String!
+    name: String!
+    userName: String!
+    location: String
+}
+
+type Tag {
+    raw: String!
+    isMachineTag: Boolean!
+}
+
+type Exif {
+    tagSpace: String!
+    tag: String!
+    label: String!
+    raw: String!
 }

@@ -58,3 +58,28 @@ func (v *FlexFloat) MarshalJSON() ([]byte, error) {
 func (v *FlexFloat) Float() float64 {
 	return v.value
 }
+
+type FlexInt64 struct {
+	value int64
+}
+
+func (v *FlexInt64) UnmarshalJSON(bytes []byte) error {
+	s := string(bytes)
+	if l := len(s); l > 1 && s[0] == '"' && s[l-1] == '"' {
+		s = s[1 : l-1]
+	}
+	value, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return err
+	}
+	v.value = value
+	return nil
+}
+
+func (v *FlexInt64) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v.value)
+}
+
+func (v *FlexInt64) Int64() int64 {
+	return v.value
+}

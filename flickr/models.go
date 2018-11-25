@@ -87,3 +87,64 @@ func (b *BoundingBox) Query() *string {
 	}
 	return nil
 }
+
+type PhotoInfoResponse struct {
+	Photo PhotoInfo `json:"photo"`
+	Stat  string    `json:"stat"`
+}
+
+type PhotoInfo struct {
+	ID           string           `json:"id"`
+	DateUploaded common.FlexInt64 `json:"dateuploaded"`
+	Owner        PhotoOwner       `json:"owner"`
+	Title        FlickrString     `json:"title"`
+	Description  FlickrString     `json:"description"`
+	Tags         FlickrTagList    `json:"tags"`
+}
+
+type PhotoOwner struct {
+	Nsid     string  `json:"nsid"`
+	UserName string  `json:"username"`
+	RealName string  `json:"realname"`
+	Location *string `json:"location"`
+}
+
+type FlickrString struct {
+	Content string `json:"_content"`
+}
+
+func (f FlickrString) String() string {
+	return f.Content
+}
+
+type FlickrTagList struct {
+	Tag []FlickrTag `json:"tag"`
+}
+
+type FlickrTag struct {
+	ID         string `json:"id"`
+	Author     string `json:"author"`
+	AuthorName string `json:"authorname"`
+	Raw        string `json:"raw"`
+	Content    string `json:"_content"`
+	MachineTag int    `json:"machine_tag"`
+}
+
+type PhotoExifResponse struct {
+	Photo PhotoExif `json:"photo"`
+	Stat  string    `json:"stat"`
+}
+
+type PhotoExif struct {
+	ID     string    `json:"id"`
+	Camera string    `json:"camera"`
+	Tags   []ExifTag `json:"exif"`
+}
+
+type ExifTag struct {
+	TagSpace   string       `json:"tagspace"`
+	TagSpaceID int32        `json:"tagspaceid"`
+	Tag        string       `json:"tag"`
+	Label      string       `json:"label"`
+	Raw        FlickrString `json:"raw"`
+}
