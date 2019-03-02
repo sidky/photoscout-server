@@ -2,8 +2,6 @@ package flickr
 
 import (
 	"fmt"
-	"net/url"
-
 	"github.com/sidky/photoscout-server/common"
 )
 
@@ -82,7 +80,7 @@ type BoundingBox struct {
 
 func (b *BoundingBox) Query() *string {
 	if b != nil {
-		q := url.QueryEscape(fmt.Sprintf("%f,%f,%f,%f", b.MinLongitude, b.MinLatitude, b.MaxLongitude, b.MaxLatitude))
+		q := fmt.Sprintf("%f,%f,%f,%f", b.MinLongitude, b.MinLatitude, b.MaxLongitude, b.MaxLatitude)
 		return &q
 	}
 	return nil
