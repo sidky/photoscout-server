@@ -109,9 +109,9 @@ type PhotoOwner struct {
 }
 
 type PhotoLocation struct {
-	Latitude     float64        `json:"latitude"`
-	Longitude    float64        `json:"longitude"`
-	Accuracy     int32          `json:"accuracy"`
+	Latitude     common.FlexFloat        `json:"latitude"`
+	Longitude    common.FlexFloat        `json:"longitude"`
+	Accuracy     common.FlexInt          `json:"accuracy"`
 	Neighborhood FlickrLocation `json:"neighborhood"`
 	Locality     FlickrLocation `json:"locality"`
 	County       FlickrLocation `json:"county"`

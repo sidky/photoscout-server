@@ -93,7 +93,7 @@ func (r *Resolver) Detail(args struct {
 
 	var location *Location
 	if loc := info.Location; loc != nil {
-		location = &Location{latitude: loc.Latitude, longitude: loc.Longitude, accuracy: loc.Accuracy}
+		location = &Location{latitude: loc.Latitude.Float(), longitude: loc.Longitude.Float(), accuracy: *loc.Accuracy.Int()}
 	}
 
 	exifResponse, err := r.flickr.Exif(*args.PhotoId)
