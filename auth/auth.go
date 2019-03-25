@@ -32,6 +32,7 @@ func (auth *Authenticator) Authenticate(ctx context.Context, id string) (*string
 		return nil, err
 	}
 	fmt.Println(token)
+	fmt.Println(token.UID)
 	return &token.UID, nil
 }
 
