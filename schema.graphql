@@ -10,6 +10,15 @@ type PhotoQuery {
     detail(photoId: String): PhotoDetail
 }
 
+type Mutation {
+    bookmarkPhoto(photoId: String!): OpResult!
+}
+
+type OpResult {
+    success: Boolean!,
+    error: String
+}
+
 type PhotoList {
     photos: [Photo]
     pagination: Pagination!

@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/sidky/photoscout-server/auth"
@@ -30,6 +31,8 @@ func (g *GraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	r.Context()
+
 	uuid, err := g.authenticator.Authenticate(r.Context(), token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusForbidden)
@@ -41,12 +44,13 @@ func (g *GraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("UUID: %s\n", *uuid)
+	updated := context.WithValue(r.Context(), "uuid", uuid)
 	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	response := g.schema.Exec(r.Context(), params.Query, params.OperationName, params.Variables)
+	response := g.schema.Exec(updated, params.Query, params.OperationName, params.Variables)
 	responseJSON, err := json.Marshal(response)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -16,9 +17,11 @@ func NewResolver(flickr *flickr.Flickr) *Resolver {
 	return &Resolver{flickr: flickr}
 }
 
-func (r *Resolver) Interesting(args struct {
+func (r *Resolver) Interesting(ctx context.Context, args struct {
 	Page *int32
 }) *PhotoList {
+
+	log.Printf("UUID: %s", ctx.Value("uuid"))
 
 	response, err := r.flickr.Interesting(args.Page)
 	if err != nil {
@@ -131,6 +134,12 @@ func (r *Resolver) Detail(args struct {
 		location:    location,
 	}
 	return &response
+}
+
+func (r *Resolver) BookmarkPhoto(args struct {
+	photoId string
+}) *OpResult {
+	return nil
 }
 
 func convertPhoto(flickr *flickr.Photo) *Photo {

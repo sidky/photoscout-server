@@ -207,3 +207,16 @@ func (exif *Exif) Label() string {
 func (exif *Exif) Raw() string {
 	return exif.raw
 }
+
+type OpResult struct {
+	success bool
+	err *string
+}
+
+func (r *OpResult) Success() bool {
+	return r.success
+}
+
+func (r *OpResult) Error() *string {
+	return r.err
+}
