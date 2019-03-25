@@ -36,7 +36,7 @@ func (g *GraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if uuid != nil {
+	if uuid == nil {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
