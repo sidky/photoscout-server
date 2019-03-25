@@ -29,5 +29,5 @@ func (user User) BookmarkPhoto(photoId string) error {
 	}()
 
 	_, err = db.Exec(updateStatement, user.UUID, photoId)
-	return nil
+	return err
 }
