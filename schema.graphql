@@ -2,6 +2,7 @@ scalar Time
 
 schema {
     query: PhotoQuery
+    mutation: Mutation
 }
 
 type PhotoQuery {
