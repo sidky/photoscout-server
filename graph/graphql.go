@@ -2,6 +2,8 @@ package graph
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/sidky/photoscout-server/auth"
 	"net/http"
 
 	graphql "github.com/graph-gophers/graphql-go"
@@ -9,10 +11,11 @@ import (
 
 type GraphQL struct {
 	schema *graphql.Schema
+	authenticator *auth.Authenticator
 }
 
-func NewGraphQL(schema *graphql.Schema) *GraphQL {
-	return &GraphQL{schema: schema}
+func NewGraphQL(schema *graphql.Schema, authenticator *auth.Authenticator) *GraphQL {
+	return &GraphQL{schema: schema, authenticator: authenticator}
 }
 
 func (g *GraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -21,6 +24,16 @@ func (g *GraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		OperationName string                 `json:"operationName"`
 		Variables     map[string]interface{} `json:"variables"`
 	}
+	token := r.Header.Get("X-Auth-Token")
+	if token == "" {
+		http.Error(w, "Unauthorized", http.StatusForbidden)
+	}
+
+	uuid, err := g.authenticator.Authenticate(r.Context(), token)
+	if err != nil {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+	}
+	fmt.Printf("UUID: %s\n", uuid)
 	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/sidky/photoscout-server/auth"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,8 +32,12 @@ func graphQL() *graph.GraphQL {
 	resolver := graph.NewResolver(flickr)
 
 	schema := graphql.MustParseSchema(string(d), resolver)
+	authenticator, err := auth.NewAuthenticator()
+	if err != nil {
+		panic(err)
+	}
 
-	return graph.NewGraphQL(schema)
+	return graph.NewGraphQL(schema, authenticator)
 }
 
 func main() {
