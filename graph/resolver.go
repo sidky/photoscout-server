@@ -2,8 +2,10 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"github.com/sidky/photoscout-server/profile"
 	"log"
+	"strings"
 	"time"
 
 	graphql "github.com/graph-gophers/graphql-go"
@@ -78,7 +80,11 @@ func (r *Resolver) Search(args struct {
 func (r *Resolver) Detail(args struct {
 	PhotoId *string
 }) *PhotoDetail {
-	infoResponse, err := r.flickr.Info(*args.PhotoId)
+	split := strings.Index(*args.PhotoId, ":")
+	source := (*args.PhotoId)[:split]
+	log.Printf("Source: %s", source)
+	photoId := (*args.PhotoId)[split+1:]
+	infoResponse, err := r.flickr.Info(photoId)
 	if err != nil {
 		log.Print(err)
 	}
@@ -100,7 +106,7 @@ func (r *Resolver) Detail(args struct {
 		location = &Location{latitude: loc.Latitude.Float(), longitude: loc.Longitude.Float(), accuracy: *loc.Accuracy.Int()}
 	}
 
-	exifResponse, err := r.flickr.Exif(*args.PhotoId)
+	exifResponse, err := r.flickr.Exif(photoId)
 	photoExif := exifResponse.Photo
 	exifs := make([]*Exif, len(photoExif.Tags))
 	for index, exif := range photoExif.Tags {
@@ -154,7 +160,7 @@ func (r *Resolver) BookmarkPhoto(ctx context.Context, args struct {
 func convertPhoto(flickr *flickr.Photo) *Photo {
 	var photo Photo
 
-	photo.id = flickr.ID
+	photo.id = fmt.Sprintf("flickr:%s", flickr.ID)
 	photo.ownerName = flickr.OwnerName
 
 	if *flickr.Accuracy.Int() > 0 {
