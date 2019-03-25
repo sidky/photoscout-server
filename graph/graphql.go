@@ -27,11 +27,18 @@ func (g *GraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("X-Auth-Token")
 	if token == "" {
 		http.Error(w, "Unauthorized", http.StatusForbidden)
+		return
 	}
 
 	uuid, err := g.authenticator.Authenticate(r.Context(), token)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+
+	if uuid != nil {
 		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
 	}
 	fmt.Printf("UUID: %s\n", uuid)
 	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {

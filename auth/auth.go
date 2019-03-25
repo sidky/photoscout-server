@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"firebase.google.com/go"
+	"fmt"
 	"google.golang.org/api/option"
 	"os"
 )
@@ -30,6 +31,7 @@ func (auth *Authenticator) Authenticate(ctx context.Context, id string) (*string
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(token)
 	return &token.UID, nil
 }
 
