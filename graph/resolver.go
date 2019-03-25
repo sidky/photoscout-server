@@ -2,12 +2,15 @@ package graph
 
 import (
 	"context"
+	"github.com/sidky/photoscout-server/profile"
 	"log"
 	"time"
 
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/sidky/photoscout-server/flickr"
 )
+
+const UUID = "uuid"
 
 type Resolver struct {
 	flickr *flickr.Flickr
@@ -20,8 +23,6 @@ func NewResolver(flickr *flickr.Flickr) *Resolver {
 func (r *Resolver) Interesting(ctx context.Context, args struct {
 	Page *int32
 }) *PhotoList {
-
-	log.Printf("UUID: %s", ctx.Value("uuid"))
 
 	response, err := r.flickr.Interesting(args.Page)
 	if err != nil {
@@ -136,10 +137,18 @@ func (r *Resolver) Detail(args struct {
 	return &response
 }
 
-func (r *Resolver) BookmarkPhoto(args struct {
+func (r *Resolver) BookmarkPhoto(ctx context.Context, args struct {
 	photoId string
 }) *OpResult {
-	return nil
+	uuid := ctx.Value(UUID).(*string)
+	user := profile.User{*uuid}
+	err := user.BookmarkPhoto(args.photoId)
+	if err != nil {
+		errMsg := err.Error()
+		return &OpResult{success: false, err: &errMsg }
+	} else {
+		return &OpResult{success: true}
+	}
 }
 
 func convertPhoto(flickr *flickr.Photo) *Photo {
