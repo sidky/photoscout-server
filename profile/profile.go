@@ -15,7 +15,7 @@ type User struct {
 func (user User) BookmarkPhoto(photoId string) error {
 	updateStatement := `
 		INSERT INTO bookmarks(user_id, photo_id) VALUES($1, $2) ON CONFLICT (user_id, photo_id)
-		DO UPDATE SET updated_at = now() WHERE user_id = $1 AND photo_id = $2
+		DO UPDATE SET updated_at = now() WHERE bookmarks.user_id = $1 AND bookmarks.photo_id = $2
 	`
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
