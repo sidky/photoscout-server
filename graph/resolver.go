@@ -138,11 +138,11 @@ func (r *Resolver) Detail(args struct {
 }
 
 func (r *Resolver) BookmarkPhoto(ctx context.Context, args struct {
-	photoId string
+	PhotoId string
 }) *OpResult {
 	uuid := ctx.Value(UUID).(*string)
 	user := profile.User{*uuid}
-	err := user.BookmarkPhoto(args.photoId)
+	err := user.BookmarkPhoto(args.PhotoId)
 	if err != nil {
 		errMsg := err.Error()
 		return &OpResult{success: false, err: &errMsg }
