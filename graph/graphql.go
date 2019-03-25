@@ -40,7 +40,7 @@ func (g *GraphQL) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
-	fmt.Printf("UUID: %s\n", uuid)
+	fmt.Printf("UUID: %s\n", *uuid)
 	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
