@@ -80,7 +80,7 @@ func (r *Resolver) Search(args struct {
 func (r *Resolver) Detail(ctx context.Context, args struct {
 	PhotoId *string
 }) *PhotoDetail {
-	user := profile.User{ UUID: ctx.Value("uuid").(string)}
+	user := profile.User{ UUID: *ctx.Value("uuid").(*string)}
 
 	split := strings.Index(*args.PhotoId, ":")
 	source := (*args.PhotoId)[:split]
