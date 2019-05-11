@@ -80,6 +80,7 @@ type PhotoDetail {
     tags: [Tag]
     exif: [Exif]
     location: Location
+    bookmarked: Boolean!
 }
 
 type PhotoOwner {

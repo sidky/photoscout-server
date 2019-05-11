@@ -111,6 +111,7 @@ type PhotoDetail struct {
 	tags        []*Tag
 	exif        []*Exif
 	location    *Location
+	bookmarked	bool
 }
 
 func (detail *PhotoDetail) ID() string {
@@ -147,6 +148,10 @@ func (detail *PhotoDetail) Exif() *[]*Exif {
 
 func (detail *PhotoDetail) Location() *Location {
 	return detail.location
+}
+
+func (detail *PhotoDetail) Bookmarked() bool {
+	return detail.bookmarked
 }
 
 type PhotoOwner struct {

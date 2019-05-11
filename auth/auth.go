@@ -4,6 +4,7 @@ import (
 	"context"
 	"firebase.google.com/go"
 	"google.golang.org/api/option"
+	"log"
 	"os"
 )
 
@@ -12,6 +13,7 @@ type Authenticator struct {
 }
 
 func NewAuthenticator() (*Authenticator, error) {
+	log.Println( os.Getenv("FIREBASE_ACCOUNT"))
 	b := []byte(os.Getenv("FIREBASE_ACCOUNT"))
 	opt := option.WithCredentialsJSON(b)
 	app, err := firebase.NewApp(context.Background(), nil, opt)

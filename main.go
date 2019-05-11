@@ -31,6 +31,7 @@ func graphQL() *graph.GraphQL {
 	flickr := flickr.FlickrApi(os.Getenv("FLICKR_API_KEY"))
 	resolver := graph.NewResolver(flickr)
 
+	log.Println(string(d))
 	schema := graphql.MustParseSchema(string(d), resolver)
 	authenticator, err := auth.NewAuthenticator()
 	if err != nil {

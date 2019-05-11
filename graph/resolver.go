@@ -77,9 +77,11 @@ func (r *Resolver) Search(args struct {
 	return &PhotoList{photos: photos, pagination: &pagination}
 }
 
-func (r *Resolver) Detail(args struct {
+func (r *Resolver) Detail(ctx context.Context, args struct {
 	PhotoId *string
 }) *PhotoDetail {
+	user := profile.User{ UUID: ctx.Value("uuid").(string)}
+
 	split := strings.Index(*args.PhotoId, ":")
 	source := (*args.PhotoId)[:split]
 	log.Printf("Source: %s", source)
@@ -129,8 +131,14 @@ func (r *Resolver) Detail(args struct {
 		location: info.Owner.Location,
 	}
 
+	bookmarked, err := user.IsBookmarkedPhoto(*args.PhotoId)
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	response := PhotoDetail{
-		id:          info.ID,
+			id:          fmt.Sprintf("flickr:%s", info.ID),
 		uploadedAt:  graphql.Time{time.Unix(int64(info.DateUploaded.Int64()), 0)},
 		owner:       owner,
 		title:       info.Title.Content,
@@ -139,6 +147,7 @@ func (r *Resolver) Detail(args struct {
 		tags:        tags,
 		exif:        exifs,
 		location:    location,
+		bookmarked:  bookmarked,
 	}
 	return &response
 }
