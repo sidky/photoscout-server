@@ -35,6 +35,7 @@ type Photo struct {
 	ownerName string
 	location  *Location
 	photoURLs []*SizedURL
+	bookmarked bool
 }
 
 func (p *Photo) ID() graphql.ID {
@@ -51,6 +52,10 @@ func (p *Photo) Location() *Location {
 
 func (p *Photo) PhotoURLs() *[]*SizedURL {
 	return &p.photoURLs
+}
+
+func (p *Photo) Bookmarked() bool {
+	return p.bookmarked
 }
 
 type Location struct {

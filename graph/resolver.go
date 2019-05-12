@@ -26,6 +26,7 @@ func (r *Resolver) Interesting(ctx context.Context, args struct {
 	Page *int32
 }) *PhotoList {
 
+	user := profile.User{ UUID: *ctx.Value("uuid").(*string)}
 	response, err := r.flickr.Interesting(args.Page)
 	if err != nil {
 		log.Print(err)
@@ -34,6 +35,12 @@ func (r *Resolver) Interesting(ctx context.Context, args struct {
 	log.Printf("Photos: %d", len(photos))
 	for i, photo := range response.Photos.Photos {
 		photos[i] = convertPhoto(&photo)
+	}
+	updated, err := updateWithBookmarked(user, photos)
+	if err != nil {
+		log.Printf("Unable to update with bookmarks: %v\n", err)
+	} else {
+		photos = updated
 	}
 
 	page := response.Photos.Page.Int()
@@ -49,11 +56,14 @@ func (r *Resolver) Interesting(ctx context.Context, args struct {
 	return &PhotoList{photos: photos, pagination: &pagination}
 }
 
-func (r *Resolver) Search(args struct {
+func (r *Resolver) Search(ctx context.Context, args struct {
 	Query *string
 	Bbox  *BoundingBox
 	Page  *int32
 }) *PhotoList {
+
+	user := profile.User{ UUID: *ctx.Value("uuid").(*string)}
+
 	response, err := r.flickr.Search(args.Query, convertBoundingBox(args.Bbox), args.Page)
 	if err != nil {
 		log.Print(err)
@@ -64,6 +74,12 @@ func (r *Resolver) Search(args struct {
 		photos[i] = convertPhoto(&photo)
 	}
 
+	updated, err := updateWithBookmarked(user, photos)
+	if err != nil {
+		log.Printf("Unable to update with bookmarks: %v\n", err)
+	} else {
+		photos = updated
+	}
 	page := response.Photos.Page.Int()
 	var hasNext bool
 	if response.Photos.Page == response.Photos.Pages {
@@ -225,4 +241,29 @@ func filterNull(urls []*SizedURL) []*SizedURL {
 		}
 	}
 	return filtered
+}
+
+func updateWithBookmarked(user profile.User, photos []*Photo) ([]*Photo, error) {
+	if len(photos) > 0 {
+		photoIds := make([]string, len(photos))
+		for n, photo := range photos {
+			photoIds[n] = photo.id
+		}
+		bookmarked, err := user.GetBookmarkedPhotosFromSet(photoIds)
+		if err != nil {
+			return nil, err
+		}
+		bookmarkMap := make(map[string]bool)
+		for _, id := range bookmarked {
+			bookmarkMap[id] = true
+		}
+		updatedPhotos := make([]*Photo, len(photos))
+		for n, photo := range photos {
+			photo.bookmarked = bookmarkMap[photo.id]
+			updatedPhotos[n] = photo
+		}
+		return updatedPhotos, nil
+	} else {
+		return nil, nil
+	}
 }
